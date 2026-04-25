@@ -3,58 +3,125 @@ from flask_cors import CORS
 import numpy as np
 from tensorflow.keras.models import load_model
 from PIL import Image
+from google.cloud import firestore
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-# Load models
-heart_model = load_model("heart_disease.h5")
-xray_model = load_model("x_ray.h5")
+# -------------------------
+# 🔐 Firebase Setup
+# -------------------------
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
+    "phenomenia-detectator-firebase-adminsdk-fbsvc-2ef1991533.json"
+)
+db = firestore.Client()
 
 # -------------------------
-# 🟦 Heart Prediction
+# 🤖 Load Models
 # -------------------------
-@app.route('/predict-heart', methods=['POST'])
+heart_model = load_model("models/heart_model.keras")
+xray_model = load_model("models/final_improved_model.keras")
+
+
+# -------------------------
+# 🧠 Helper (handle missing inputs)
+# -------------------------
+def get_value(data, key, default=0):
+    return float(data[key]) if key in data else default
+
+
+# -------------------------
+# 🟦 Heart Prediction (Flexible Input)
+# -------------------------
+@app.route("/predict-heart", methods=["POST"])
 def predict_heart():
-    data = request.json
+    try:
+        data = request.json
 
-    features = [
-        data["age"],
-        data["restingBP"],
-        data["cholesterol"]
-    ]
+        # Always create 13 features (model requirement)
+        features = [
+            get_value(data, "age"),
+            get_value(data, "sex"),
+            get_value(data, "cp"),
+            get_value(data, "trestbps"),
+            get_value(data, "chol"),
+            get_value(data, "fbs"),
+            get_value(data, "restecg"),
+            get_value(data, "thalach"),
+            get_value(data, "exang"),
+            get_value(data, "oldpeak"),
+            get_value(data, "slope"),
+            get_value(data, "ca"),
+            get_value(data, "thal"),
+        ]
 
-    features = np.array([features])
-    pred = heart_model.predict(features)
+        features = np.array([features])
 
-    result = "High Risk" if pred[0][0] > 0.5 else "Low Risk"
+        pred = heart_model.predict(features)
+        confidence = float(pred[0][0])
 
-    return jsonify({
-        "prediction": result,
-        "confidence": float(pred[0][0])
-    })
+        result = "High Risk" if confidence > 0.5 else "Low Risk"
+
+        # Save to Firestore
+        db.collection("heart_predictions").add(
+            {
+                "input": data,
+                "processed_features": features.tolist(),
+                "prediction": result,
+                "confidence": confidence,
+            }
+        )
+
+        return jsonify({"prediction": result, "confidence": confidence})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # -------------------------
 # 🟩 X-ray Prediction
 # -------------------------
-@app.route('/predict-xray', methods=['POST'])
+@app.route("/predict-xray", methods=["POST"])
 def predict_xray():
-    file = request.files['image']
+    try:
+        if "image" not in request.files:
+            return jsonify({"error": "No image uploaded"}), 400
 
-    img = Image.open(file).resize((224, 224))
-    img = np.array(img) / 255.0
-    img = np.expand_dims(img, axis=0)
+        file = request.files["image"]
 
-    pred = xray_model.predict(img)
-    result = "Pneumonia" if pred[0][0] > 0.5 else "Normal"
+        # Process image
+        img = Image.open(file).convert("RGB").resize((224, 224))
+        img = np.array(img) / 255.0
+        img = np.expand_dims(img, axis=0)
 
-    return jsonify({
-        "prediction": result,
-        "confidence": float(pred[0][0])
-    })
+        pred = xray_model.predict(img)
+        confidence = float(pred[0][0])
+
+        # 🔥 Use your best threshold
+        result = "Pneumonia" if confidence > 0.65 else "Normal"
+
+        # Save to Firestore
+        db.collection("xray_predictions").add(
+            {"prediction": result, "confidence": confidence}
+        )
+
+        return jsonify({"prediction": result, "confidence": confidence})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
-# Run server
-if __name__ == '__main__':
+# -------------------------
+# 🧪 Test Route
+# -------------------------
+@app.route("/")
+def home():
+    return "Backend running (ML + Firestore) ✅"
+
+
+# -------------------------
+# ▶ Run Server
+# -------------------------
+if __name__ == "__main__":
     app.run(debug=True)
