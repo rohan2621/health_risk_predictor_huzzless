@@ -23,14 +23,13 @@ h5py==3.14.0
 idna==3.13
 itsdangerous==2.2.0
 Jinja2==3.1.6
-keras==3.14.0
 libclang==18.1.1
 markdown-it-py==4.0.0
 MarkupSafe==3.0.3
 mdurl==0.1.2
 ml_dtypes==0.5.4
 namex==0.1.0
-numpy==2.4.4
+numpy==1.26.4
 opt_einsum==3.4.0
 optree==0.19.0
 packaging==26.2

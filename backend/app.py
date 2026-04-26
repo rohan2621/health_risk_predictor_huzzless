@@ -1,46 +1,114 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from PIL import Image
 from google.cloud import firestore
+from io import BytesIO
 import os
+import joblib
 
 app = Flask(__name__)
 CORS(app)
 
 # -------------------------
-# 🔐 Firebase Setup
+# 🔐 Firebase Setup (optional)
 # -------------------------
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
-    "phenomenia-detectator-firebase-adminsdk-fbsvc-2ef1991533.json"
-)
-db = firestore.Client()
+try:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "phenomenia-detectator.json"
+    db = firestore.Client()
+    FIREBASE_OK = True
+    print("✅ Firestore connected")
+except Exception as e:
+    print("⚠️ Firestore disabled:", e)
+    FIREBASE_OK = False
+
+# -------------------------
+# ⚙️ Config
+# -------------------------
+IMG_SIZE = 128
+
+# -------------------------
+# 🔥 KERAS FIX (IMPORTANT)
+# -------------------------
+import keras
+from keras.layers import Dense
+
+original_init = Dense.__init__
+
+def new_init(self, *args, **kwargs):
+    kwargs.pop("quantization_config", None)
+    return original_init(self, *args, **kwargs)
+
+Dense.__init__ = new_init
+
+# -------------------------
+# 📁 PATH SETUP (FIXED)
+# -------------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR = os.path.join(BASE_DIR, "models")
+
+print("📁 Base Dir:", BASE_DIR)
+print("📁 Model Dir:", MODEL_DIR)
 
 # -------------------------
 # 🤖 Load Models
 # -------------------------
-heart_model = load_model("models/heart_model.keras")
-xray_model = load_model("models/final_improved_model.keras")
 
+# ❤️ Heart Model (XGBoost)
+heart_model = None
+try:
+    heart_path = os.path.join(MODEL_DIR, "heart_model.pkl")
+    print("🔍 Loading heart model from:", heart_path)
+
+    if not os.path.exists(heart_path):
+        raise FileNotFoundError("heart_model.pkl not found")
+
+    heart_model = joblib.load(heart_path)
+    print("✅ Heart model loaded successfully")
+
+except Exception as e:
+    print("❌ Heart model load error:", e)
+
+# 🫁 X-ray Model (Keras)
+def load_keras_model(path):
+    try:
+        model = tf.keras.models.load_model(path, compile=False)
+        print(f"✅ Loaded model: {path}")
+        return model
+    except Exception as e:
+        print(f"❌ Failed to load {path}: {e}")
+        return None
+
+xray_model = load_keras_model(os.path.join(MODEL_DIR, "my_model.keras"))
+
+print("🚀 Server Ready")
 
 # -------------------------
-# 🧠 Helper (handle missing inputs)
+# 🧠 Helper
 # -------------------------
 def get_value(data, key, default=0):
-    return float(data[key]) if key in data else default
-
+    try:
+        return float(data.get(key, default))
+    except:
+        return default
 
 # -------------------------
-# 🟦 Heart Prediction (Flexible Input)
+# ❤️ Heart Prediction
 # -------------------------
 @app.route("/predict-heart", methods=["POST"])
 def predict_heart():
     try:
+        if heart_model is None:
+            return jsonify({
+                "error": "Heart model not loaded",
+                "debug": "Check backend terminal for path issue"
+            }), 500
+
         data = request.json
 
-        # Always create 13 features (model requirement)
-        features = [
+        features = np.array([[
             get_value(data, "age"),
             get_value(data, "sex"),
             get_value(data, "cp"),
@@ -54,61 +122,90 @@ def predict_heart():
             get_value(data, "slope"),
             get_value(data, "ca"),
             get_value(data, "thal"),
-        ]
+        ]])
 
-        features = np.array([features])
+        print("🧠 INPUT:", features)
 
-        pred = heart_model.predict(features)
-        confidence = float(pred[0][0])
+        prob = heart_model.predict_proba(features)[0][1]
 
-        result = "High Risk" if confidence > 0.5 else "Low Risk"
+        print("🧪 PROBABILITY:", prob)
 
-        # Save to Firestore
-        db.collection("heart_predictions").add(
-            {
-                "input": data,
-                "processed_features": features.tolist(),
-                "prediction": result,
-                "confidence": confidence,
-            }
-        )
+        if prob < 0.35:
+            result = "Low Risk"
+        elif prob < 0.65:
+            result = "Medium Risk"
+        else:
+            result = "High Risk"
 
-        return jsonify({"prediction": result, "confidence": confidence})
+        if FIREBASE_OK:
+            try:
+                db.collection("heart_predictions").add({
+                    "input": data,
+                    "prediction": result,
+                    "confidence": float(prob)
+                })
+            except Exception as e:
+                print("⚠️ Firestore error:", e)
+
+        return jsonify({
+            "prediction": result,
+            "confidence": float(prob)
+        })
 
     except Exception as e:
+        print("❌ Heart Error:", e)
         return jsonify({"error": str(e)}), 500
 
 
 # -------------------------
-# 🟩 X-ray Prediction
+# 🫁 X-ray Prediction
 # -------------------------
 @app.route("/predict-xray", methods=["POST"])
 def predict_xray():
     try:
+        if xray_model is None:
+            return jsonify({"error": "X-ray model not loaded"}), 500
+
         if "image" not in request.files:
             return jsonify({"error": "No image uploaded"}), 400
 
         file = request.files["image"]
 
-        # Process image
-        img = Image.open(file).convert("RGB").resize((224, 224))
-        img = np.array(img) / 255.0
-        img = np.expand_dims(img, axis=0)
+        try:
+            img_size = xray_model.input_shape[1]
+        except:
+            img_size = IMG_SIZE
 
-        pred = xray_model.predict(img)
-        confidence = float(pred[0][0])
+        img = Image.open(BytesIO(file.read())).convert('RGB')
+        img = img.resize((img_size, img_size))
 
-        # 🔥 Use your best threshold
-        result = "Pneumonia" if confidence > 0.65 else "Normal"
+        img_array = tf.keras.preprocessing.image.img_to_array(img)
+        img_array = img_array.reshape(-1, img_size, img_size, 3)
+        img_array = img_array / 255.0
 
-        # Save to Firestore
-        db.collection("xray_predictions").add(
-            {"prediction": result, "confidence": confidence}
-        )
+        pred = xray_model.predict(img_array)
 
-        return jsonify({"prediction": result, "confidence": confidence})
+        if pred.shape[-1] == 1:
+            value = float(pred[0][0])
+            if value >= 0.5:
+                result = "PNEUMONIA"
+                confidence = value
+            else:
+                result = "NORMAL"
+                confidence = 1 - value
+        else:
+            class_index = int(np.argmax(pred[0]))
+            confidence = float(np.max(pred[0]))
+            classes = ["NORMAL", "PNEUMONIA"]
+            result = classes[class_index]
+
+        return jsonify({
+            "prediction": result,
+            "confidence": float(confidence)
+        })
 
     except Exception as e:
+        print("❌ X-ray Error:", e)
         return jsonify({"error": str(e)}), 500
 
 
@@ -117,11 +214,11 @@ def predict_xray():
 # -------------------------
 @app.route("/")
 def home():
-    return "Backend running (ML + Firestore) ✅"
+    return "Backend running (ALL OK) ✅"
 
 
 # -------------------------
-# ▶ Run Server
+# ▶ Run Server  
 # -------------------------
 if __name__ == "__main__":
     app.run(debug=True)

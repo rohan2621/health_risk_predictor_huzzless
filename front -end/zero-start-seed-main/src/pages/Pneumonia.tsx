@@ -30,20 +30,35 @@ const Pneumonia = () => {
       return;
     }
     setLoading(true);
-    try {
-      // TODO: Replace this with your actual ML API endpoint.
-      // Example:
-      // const formData = new FormData();
-      // formData.append("image", file);
-      // const res = await fetch("https://your-ml-api.com/predict", { method: "POST", body: formData });
-      // const data = await res.json();
-      // setResult({ label: data.label, confidence: data.confidence });
+    setResult(null);
 
-      await new Promise((r) => setTimeout(r, 1200));
-      setResult({ label: "Awaiting ML API", confidence: 0 });
-      toast({ title: "Connect your ML API in src/pages/Pneumonia.tsx" });
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch("http://127.0.0.1:5000/predict-xray", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Prediction failed");
+      }
+
+      setResult({
+        label: data.prediction,
+        confidence: data.confidence
+      });
+
     } catch (err: any) {
-      toast({ title: "Analysis failed", description: err.message, variant: "destructive" });
+      console.error(err);
+      toast({
+        title: "Analysis failed",
+        description: err.message,
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }

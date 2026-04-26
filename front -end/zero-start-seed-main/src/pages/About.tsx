@@ -1,127 +1,270 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 
-const About = () => {
+export default function About() {
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Hero */}
-        <section className="rounded-3xl bg-gradient-hero p-8 lg:p-12 shadow-card">
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-card/70 backdrop-blur px-3 py-1 text-xs font-medium text-primary">
-              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              About this project
-            </div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-foreground">HealthGuard AI</h1>
-            <p className="text-base lg:text-lg text-muted-foreground">
-              A simple health-based web application that helps users understand their health in a basic way —
-              detecting pneumonia from chest X-ray images and giving general health insights.
-            </p>
-          </div>
-        </section>
+      <div className="space-y-8">
 
-        {/* About + Purpose */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="rounded-2xl bg-card p-6 lg:p-8 shadow-card border border-border/50">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info-soft text-info">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              </div>
-              <h2 className="text-xl font-bold text-foreground">About This Project</h2>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              This project is a simple health-based web application that helps users understand their health in a basic way.
-              It focuses on detecting pneumonia from chest X-ray images and giving general health insights based on user input.
-              The system is designed to be easy to use, so anyone can interact with it and get quick results in a clear and simple format.
-            </p>
-          </div>
+        {/* HERO */}
+        <section className="rounded-3xl p-10 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white shadow-xl">
+          <h1 className="text-4xl font-bold mb-3">
+            HealthGuard AI
+          </h1>
+          <p className="text-white/80 max-w-2xl">
+            Smart AI system for predicting heart disease risk and detecting pneumonia from X-rays instantly.
+          </p>
 
-          <div className="rounded-2xl bg-card p-6 lg:p-8 shadow-card border border-border/50">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success-soft text-success">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-              </div>
-              <h2 className="text-xl font-bold text-foreground">Purpose</h2>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              The main purpose of this project is to explore how artificial intelligence can be used in a real-world situation.
-              It also aims to show how simple systems can provide useful information without being complicated.
-              This project is mainly built for learning and practical understanding.
-            </p>
-          </div>
-        </div>
-
-        {/* Features */}
-        <section className="rounded-2xl bg-card p-6 lg:p-8 shadow-card border border-border/50">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-primary">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </div>
-            <h2 className="text-xl font-bold text-foreground">Features</h2>
-          </div>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { title: "Pneumonia Detection", desc: "Upload a chest X-ray and get a result." },
-              { title: "Health Insights", desc: "Basic health insights based on user data." },
-              { title: "Clean Interface", desc: "Easy-to-use, modern dashboard." },
-              { title: "Quick Results", desc: "Simple, fast feedback in plain language." },
-            ].map((f) => (
-              <li key={f.title} className="flex gap-3 items-start rounded-xl bg-muted/40 p-4">
-                <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-success text-primary-foreground shrink-0">
-                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground text-sm">{f.title}</p>
-                  <p className="text-xs text-muted-foreground">{f.desc}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* Developers */}
-        <section className="rounded-2xl bg-card p-6 lg:p-8 shadow-card border border-border/50">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning-soft text-warning">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <h2 className="text-xl font-bold text-foreground">About the Developers</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { name: "Joel Saru Magar", role: "Full Stack Developer", desc: "Worked on both the frontend and backend, connecting the interface with the system." },
-              { name: "Samuyal Dahal", role: "Frontend & UI/UX Designer", desc: "Designed the layout and overall look of the website." },
-              { name: "Rohan Timalsina", role: "Data Scientist", desc: "Worked on data handling and building the models used in the project." },
-            ].map((d) => (
-              <div key={d.name} className="rounded-xl border border-border/50 p-5 bg-muted/30">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-brand text-primary-foreground font-bold mb-3">
-                  {d.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
-                </div>
-                <p className="font-semibold text-foreground">{d.name}</p>
-                <p className="text-xs text-primary font-medium mb-2">{d.role}</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{d.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Disclaimer */}
-        <section className="rounded-2xl bg-warning-soft border border-warning/30 p-6 lg:p-8">
-          <div className="flex gap-4 items-start">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning text-primary-foreground">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          {/* STATS */}
+          <div className="flex gap-6 mt-6">
+            <div>
+              <p className="text-2xl font-bold">84%</p>
+              <p className="text-xs text-white/70">Heart Accuracy</p>
             </div>
             <div>
-              <h3 className="font-bold text-foreground mb-1">Disclaimer</h3>
-              <p className="text-sm text-foreground/80 leading-relaxed">
-                This project is created for educational purposes only. It should not be used for medical advice,
-                diagnosis, or treatment. Always consult a professional for health-related concerns.
-              </p>
+              <p className="text-2xl font-bold">0.87</p>
+              <p className="text-xs text-white/70">AUC Score</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">~73%</p>
+              <p className="text-xs text-white/70">X-ray Accuracy</p>
             </div>
           </div>
         </section>
+
+        {/* PROBLEM + SOLUTION */}
+        <section className="grid md:grid-cols-2 gap-6">
+          <div className="p-6 rounded-2xl bg-red-50 border border-red-200">
+            <h2 className="text-lg font-bold text-red-600 mb-2">🚨 Problem</h2>
+            <p className="text-sm text-gray-600">
+              Early detection of heart disease and pneumonia requires medical expertise and time,
+              which many people lack access to.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-green-50 border border-green-200">
+            <h2 className="text-lg font-bold text-green-600 mb-2">💡 Solution</h2>
+            <p className="text-sm text-gray-600">
+              HealthGuard AI provides instant AI-powered predictions using medical data and X-rays.
+            </p>
+          </div>
+        </section>
+
+        {/* FEATURES */}
+        <section className="grid md:grid-cols-3 gap-4">
+          {[
+            "❤️ Heart Risk Prediction",
+            "🫁 Pneumonia Detection",
+            "⚡ Real-time Results",
+            "📊 Confidence Scores",
+            "🧠 AI Powered",
+            "🌐 Easy to Use"
+          ].map((f, i) => (
+            <div key={i} className="p-4 rounded-xl bg-white shadow border text-sm font-medium">
+              {f}
+            </div>
+          ))}
+        </section>
+
+        {/* MODELS & PERFORMANCE */}
+        <section className="grid md:grid-cols-2 gap-6">
+
+          {/* HEART MODEL */}
+          <div className="p-6 rounded-2xl bg-white shadow border">
+            <h3 className="font-bold mb-2">❤️ Heart Disease Model</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              XGBoost model trained on clinical data
+            </p>
+
+            <div className="space-y-3 text-sm">
+
+              {/* Accuracy */}
+              <div>
+                <p className="flex justify-between">
+                  <span>Accuracy</span>
+                  <span>84%</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-blue-500 rounded w-[84%]"></div>
+                </div>
+              </div>
+
+              {/* Precision */}
+              <div>
+                <p className="flex justify-between">
+                  <span>Precision</span>
+                  <span>83%</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-green-500 rounded w-[83%]"></div>
+                </div>
+              </div>
+
+              {/* Recall */}
+              <div>
+                <p className="flex justify-between">
+                  <span>Recall</span>
+                  <span>82%</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-purple-500 rounded w-[82%]"></div>
+                </div>
+              </div>
+
+              {/* AUC */}
+              <div>
+                <p className="flex justify-between">
+                  <span>AUC</span>
+                  <span>0.87</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-pink-500 rounded w-[87%]"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* XRAY MODEL */}
+          <div className="p-6 rounded-2xl bg-white shadow border">
+            <h3 className="font-bold mb-2">🫁 X-ray Model</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              CNN model for pneumonia detection
+            </p>
+
+            <div className="space-y-3 text-sm">
+
+              {/* Accuracy */}
+              <div>
+                <p className="flex justify-between">
+                  <span>Accuracy</span>
+                  <span>73%</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-blue-500 rounded w-[73%]"></div>
+                </div>
+              </div>
+
+              {/* Precision */}
+              <div>
+                <p className="flex justify-between">
+                  <span>Precision</span>
+                  <span>90%</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-green-500 rounded w-[90%]"></div>
+                </div>
+              </div>
+
+              {/* Recall */}
+              <div>
+                <p className="flex justify-between">
+                  <span>Recall</span>
+                  <span>90%</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-purple-500 rounded w-[90%]"></div>
+                </div>
+              </div>
+
+              {/* F1 */}
+              <div>
+                <p className="flex justify-between">
+                  <span>F1 Score</span>
+                  <span>0.90</span>
+                </p>
+                <div className="h-2 bg-gray-200 rounded">
+                  <div className="h-2 bg-pink-500 rounded w-[90%]"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+        {/* HOW IT WORKS (UPGRADED) */}
+<section className="p-6 rounded-2xl bg-white shadow border">
+  <h2 className="font-bold text-lg mb-6">⚙️ How it works</h2>
+
+  <div className="grid md:grid-cols-4 gap-6">
+
+    {/* STEP 1 */}
+    <div className="p-4 rounded-xl bg-gray-50 border">
+      <div className="text-2xl mb-2">📥</div>
+      <h3 className="font-semibold text-sm mb-1">Input Data</h3>
+      <p className="text-xs text-gray-500">
+        User enters health data or uploads an X-ray image.
+      </p>
+    </div>
+
+    {/* STEP 2 */}
+    <div className="p-4 rounded-xl bg-gray-50 border">
+      <div className="text-2xl mb-2">🧠</div>
+      <h3 className="font-semibold text-sm mb-1">AI Processing</h3>
+      <p className="text-xs text-gray-500">
+        Data is cleaned, normalized, and fed into trained AI models.
+      </p>
+    </div>
+
+    {/* STEP 3 */}
+    <div className="p-4 rounded-xl bg-gray-50 border">
+      <div className="text-2xl mb-2">🔍</div>
+      <h3 className="font-semibold text-sm mb-1">Prediction</h3>
+      <p className="text-xs text-gray-500">
+        Model analyzes patterns to detect risk or disease probability.
+      </p>
+    </div>
+
+    {/* STEP 4 */}
+    <div className="p-4 rounded-xl bg-gray-50 border">
+      <div className="text-2xl mb-2">📊</div>
+      <h3 className="font-semibold text-sm mb-1">Result Output</h3>
+      <p className="text-xs text-gray-500">
+        System displays prediction with confidence score instantly.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+        {/* DISCLAIMER */}
+        <section className="p-5 rounded-xl bg-yellow-50 border border-yellow-300">
+          <p className="text-sm text-gray-700">
+            ⚠️ This is not medical advice. Always consult a doctor.
+          </p>
+        </section>
+        {/* TEAM */}
+<section className="p-6 rounded-2xl bg-white shadow border">
+  <h2 className="text-lg font-bold mb-4">🚀 Built by Group Huzzless</h2>
+
+  <p className="text-sm text-gray-500 mb-6">
+    A team passionate about building AI solutions for real-world healthcare problems.
+  </p>
+
+  <div className="grid md:grid-cols-3 gap-4">
+
+    {/* MEMBER */}
+    <div className="p-4 rounded-xl bg-gray-50 border text-center">
+      <p className="font-semibold text-gray-800">Rohan Timalsina</p>
+      <p className="text-xs text-gray-500 mt-1">Team Member</p>
+    </div>
+
+    {/* MEMBER */}
+    <div className="p-4 rounded-xl bg-gray-50 border text-center">
+      <p className="font-semibold text-gray-800">Joel Saru Magar</p>
+      <p className="text-xs text-gray-500 mt-1">Team Member</p>
+    </div>
+
+    {/* MEMBER */}
+    <div className="p-4 rounded-xl bg-gray-50 border text-center">
+      <p className="font-semibold text-gray-800">Samyul Dahal</p>
+      <p className="text-xs text-gray-500 mt-1">Team Member</p>
+    </div>
+
+  </div>
+</section>
+
       </div>
     </DashboardLayout>
   );
-};
-
-export default About;
+}
